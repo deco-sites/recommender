@@ -3,6 +3,7 @@
 // This file is automatically updated during development when running `dev.ts`.
 
 import * as $0 from "./routes/_app.tsx";
+import * as $1 from "./routes/supabase/index.ts";
 import * as $$0 from "./islands/AddToCartButton/linx.tsx";
 import * as $$1 from "./islands/AddToCartButton/shopify.tsx";
 import * as $$2 from "./islands/AddToCartButton/vnda.tsx";
@@ -27,6 +28,7 @@ import * as $$19 from "./islands/WishlistButton.tsx";
 const manifest = {
   routes: {
     "./routes/_app.tsx": $0,
+    "./routes/supabase/index.ts": $1,
   },
   islands: {
     "./islands/AddToCartButton/linx.tsx": $$0,

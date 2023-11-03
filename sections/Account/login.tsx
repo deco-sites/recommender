@@ -1,4 +1,19 @@
-export default function login() {
+function LoginPage() {
+  // const [email, setEmail] = useState("");
+  // const [password, setPassword] = useState("");
+
+  // const login = () => {
+  //   supabase.auth
+  //     .signInWithPassword({ email: email, password: password })
+  //     .then((e) => {
+  //       if (e.data.user) {
+  //         console.log("deu")
+  //       } else {
+  //         console.log("hahaha")
+  //       }
+  //     });
+  // };
+
   return (
     <section class="bg-gray-50 dark:bg-gray-900">
       <div class="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">

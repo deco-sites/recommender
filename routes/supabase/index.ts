@@ -9,14 +9,14 @@ const supabasee = createClient(
 async function supabase(req: Request, _ctx: HandlerContext) {
   if (req.method == "GET") {
     const { data } = await supabasee.from("recommender").select("*");
-
-    return data;
+    console.log(_ctx.remoteAddr)
+    return new Response(JSON.stringify(data));
   }
   if (req.method == "POST") {
     const body = req.text;
     await supabasee
       .from("recommender")
-      .insert({ userId: body.userId, category: body.category });
+      .insert({ userId: _ctx.remoteAddr, category: body.category });
 
     return "data";
   }
