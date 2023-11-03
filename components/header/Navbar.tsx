@@ -68,7 +68,7 @@ function Navbar({ items, searchbar, logo }: {
           <Searchbar searchbar={searchbar} />
           <a
             class="btn btn-circle btn-sm btn-ghost"
-            href="/signup"
+            href="/signin"
             aria-label="Log in"
           >
             <Icon id="User" size={24} strokeWidth={0.4} />
