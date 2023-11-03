@@ -1,5 +1,7 @@
 {
   "imports": {
+    "deco-sites/recommender/": "./",
+
     "$store/": "./",
     "deco/": "https://denopkg.com/deco-cx/deco@1.45.1/",
     "apps/": "https://denopkg.com/deco-cx/apps@0.19.2/",
@@ -23,7 +25,7 @@
     "check": "deno fmt && deno lint && deno check dev.ts main.ts",
     "install": "deno eval 'import \"deco/scripts/apps/install.ts\"'",
     "uninstall": "deno eval 'import \"deco/scripts/apps/uninstall.ts\"'",
-    "bundle": "deno eval 'import \"deco/scripts/apps/bundle.ts\"' deco-sites/storefront",
+    "bundle": "deno eval 'import \"deco/scripts/apps/bundle.ts\"' deco-sites/recommender",
     "cache_clean": "rm deno.lock; deno cache -r main.ts",
     "build": "deno run -A dev.ts build",
     "preview": "deno run -A main.ts"
