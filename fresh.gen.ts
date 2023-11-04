@@ -3,6 +3,7 @@
 // This file is automatically updated during development when running `dev.ts`.
 
 import * as $0 from "./routes/_app.tsx";
+import * as $1 from "./routes/supabase/index.ts";
 import * as $$0 from "./islands/AddToCartButton/linx.tsx";
 import * as $$1 from "./islands/AddToCartButton/shopify.tsx";
 import * as $$2 from "./islands/AddToCartButton/vnda.tsx";
@@ -19,14 +20,17 @@ import * as $$12 from "./islands/Header/Searchbar.tsx";
 import * as $$13 from "./islands/Newsletter.tsx";
 import * as $$14 from "./islands/OutOfStock.tsx";
 import * as $$15 from "./islands/ProductImageZoom.tsx";
-import * as $$16 from "./islands/SearchControls.tsx";
-import * as $$17 from "./islands/ShippingSimulation.tsx";
-import * as $$18 from "./islands/SliderJS.tsx";
-import * as $$19 from "./islands/WishlistButton.tsx";
+import * as $$16 from "./islands/Recommender.tsx";
+import * as $$17 from "./islands/SearchControls.tsx";
+import * as $$18 from "./islands/ShippingSimulation.tsx";
+import * as $$19 from "./islands/SideModalIsland.tsx";
+import * as $$20 from "./islands/SliderJS.tsx";
+import * as $$21 from "./islands/WishlistButton.tsx";
 
 const manifest = {
   routes: {
     "./routes/_app.tsx": $0,
+    "./routes/supabase/index.ts": $1,
   },
   islands: {
     "./islands/AddToCartButton/linx.tsx": $$0,
@@ -45,10 +49,12 @@ const manifest = {
     "./islands/Newsletter.tsx": $$13,
     "./islands/OutOfStock.tsx": $$14,
     "./islands/ProductImageZoom.tsx": $$15,
-    "./islands/SearchControls.tsx": $$16,
-    "./islands/ShippingSimulation.tsx": $$17,
-    "./islands/SliderJS.tsx": $$18,
-    "./islands/WishlistButton.tsx": $$19,
+    "./islands/Recommender.tsx": $$16,
+    "./islands/SearchControls.tsx": $$17,
+    "./islands/ShippingSimulation.tsx": $$18,
+    "./islands/SideModalIsland.tsx": $$19,
+    "./islands/SliderJS.tsx": $$20,
+    "./islands/WishlistButton.tsx": $$21,
   },
   baseUrl: import.meta.url,
 };

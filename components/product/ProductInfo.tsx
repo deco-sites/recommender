@@ -14,6 +14,7 @@ import { usePlatform } from "$store/sdk/usePlatform.tsx";
 import { ProductDetailsPage } from "apps/commerce/types.ts";
 import { mapProductToAnalyticsItem } from "apps/commerce/utils/productToAnalyticsItem.ts";
 import ProductSelector from "./ProductVariantSelector.tsx";
+import Recommender from "$store/islands/Recommender.tsx";
 
 interface Props {
   page: ProductDetailsPage | null;
@@ -61,6 +62,9 @@ function ProductInfo({ page, layout }: Props) {
   return (
     <div class="flex flex-col">
       {/* Breadcrumb */}
+      <Recommender
+        url={url}
+      />
       <Breadcrumb
         itemListElement={breadcrumbList?.itemListElement.slice(0, -1)}
       />
