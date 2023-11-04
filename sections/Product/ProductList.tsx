@@ -9,12 +9,47 @@ const getMyIP = async () => {
 };
 getMyIP();
 
-function calculatePercentageDifference(num1, num2) {
+interface DataItem {
+  userId: string;
+  url: string;
+  count: number;
+}
+
+function calculatePercentageDifference({
+  num1,
+  num2,
+}: {
+  num1: number;
+  num2: number;
+}) {
   const diff = Math.abs(num1 - num2);
   const avg = (num1 + num2) / 2;
   const percentageDiff = (diff / avg) * 100;
   return percentageDiff;
 }
+
+const countDuplicates = (data: DataItem[]) => {
+  const countMap = new Map<string, number>();
+
+  data.forEach((item) => {
+    const key = `${item.userId}_${item.url}`;
+    if (countMap.has(key)) {
+      countMap.set(key, countMap.get(key)! + 1);
+    } else {
+      countMap.set(key, 1);
+    }
+  });
+
+  const duplicates: DataItem[] = [];
+  countMap.forEach((count, key) => {
+    if ((count) => 1) {
+      const [userId, url] = key.split("_");
+      duplicates.push({ userId, url, count });
+    }
+  });
+
+  return duplicates;
+};
 
 export type Product = {
   title?: string;
@@ -25,6 +60,7 @@ export type Product = {
   url?: string;
   category?: string;
   off?: string;
+  timesClicked?: number;
 };
 
 export type Props = {
@@ -41,6 +77,8 @@ export async function loader(props: Props, _req: Request, ctx: any) {
   const newData = Array.from(
     new Map(data?.map((obj) => [obj.url, obj])).values()
   );
+
+  const duplicateItemsCount = countDuplicates(data);
 
   const results = newData?.map(async (r) => {
     // const title = r?.title.replace(/\s+/g, '-').toLowerCase()
@@ -60,9 +98,10 @@ export async function loader(props: Props, _req: Request, ctx: any) {
         .priceSpecification[0].price
     );
 
-    const offer = calculatePercentageDifference(salesPrice, listPrice);
-
-    console.log(offer);
+    const offer = calculatePercentageDifference({
+      num1: salesPrice,
+      num2: listPrice,
+    });
 
     return {
       title: result.product.name,
@@ -79,7 +118,21 @@ export async function loader(props: Props, _req: Request, ctx: any) {
     };
   });
 
-  const products = await Promise.all(results!);
+  const promiseResult = await Promise.all(results!);
+
+  const rawResult = promiseResult.map((res) => {
+    const duplicateItem = duplicateItemsCount.find(
+      (dupl) => res.url === dupl.url
+    );
+
+    if (duplicateItem) {
+      return { ...res, timesClicked: duplicateItem.count };
+    }
+
+    return;
+  });
+
+  const products = rawResult.sort((a, b) =>  b!.timesClicked - a!.timesClicked );
 
   return {
     title: "Keep shopping",
@@ -120,7 +173,9 @@ export default function ProductList({
                   <p class="mt-1 text-sm text-gray-500">{p.description}</p>
                 </div>
                 <div class="flex flex-col items-center">
-                  <p class=" font-large text-green-500 break-keep">R$&nbsp;{p.salesPrice}</p>
+                  <p class=" font-large text-green-500 break-keep">
+                    R$&nbsp;{p.salesPrice}
+                  </p>
                   <p class="text-sm font-medium line-through text-red-500 break-keep">
                     R$&nbsp;{p.listPrice}
                   </p>
