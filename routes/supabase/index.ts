@@ -1,5 +1,6 @@
 import { Handlers } from "$fresh/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.38.4";
+import { getIP } from "https://deno.land/x/get_ip/mod.ts";
 
 export const supabase = createClient(
   "https://ouacxkdusjhgnuvzbgyf.supabase.co",
@@ -12,12 +13,13 @@ export type Body = {
 };
 
 export const handler: Handlers = {
-  async GET(_req, ctx) {
-    const { data } = await supabase.from("recommender").select('*').eq('userId', ctx.remoteAddr.hostname);
+  // async GET(_req, ctx) {
+  //   const { data } = await supabase.from("recommender").select('*').eq('userId', ctx.remoteAddr.hostname);
 
-    return new Response(JSON.stringify(data));
-  },
-  async POST(_req, ctx) {
+  //   return new Response(JSON.stringify(data));
+  // },
+  async POST(_req) {
+    const ip = await getIP({ ipv6: true });
     const body = await _req.json()
   
     if (!body) {
@@ -25,7 +27,7 @@ export const handler: Handlers = {
     }
 
     try {
-    const data: Body = { userId: ctx.remoteAddr.hostname, url:body.url };
+    const data: Body = { userId: ip, url:body.url };
   
       if (!data.userId || !data.url) {
         return new Response("Data extraction error");
