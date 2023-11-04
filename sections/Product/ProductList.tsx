@@ -35,8 +35,7 @@ export async function loader(props: Props, _req: Request, ctx: any) {
 
   const duplicateItemsCount = countDuplicatesByUser(data!);
 
-  const results = newData?.map(async (r) => { 
-    // const title = r?.title.replace(/\s+/g, '-').toLowerCase()
+  const results = newData?.map(async (r) => {
     const newUrl = r.url.split("/").splice(3, 10);
     const result = await ctx.invoke(
       "vtex/loaders/intelligentSearch/productDetailsPage.ts",

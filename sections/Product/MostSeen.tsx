@@ -9,87 +9,83 @@ export type Props = {
 };
 
 export async function loader(props: Props, _req: Request, ctx: any) {
-    const { data } = await supabase
-    .from("recommender")
-    .select("*");
+  const { data } = await supabase.from("recommender").select("*");
 
   const newData = Array.from(
     new Map(data?.map((obj) => [obj.url, obj])).values()
+  );
+
+  const duplicateItemsCount = countDuplicates(data!);
+  console.log(duplicateItemsCount);
+
+  const results = newData?.map(async (r) => {
+    const newUrl = r.url.split("/").splice(3, 10);
+    const result = await ctx.invoke(
+      "vtex/loaders/intelligentSearch/productDetailsPage.ts",
+      { slug: `/${newUrl.join("/")}` }
     );
 
-    
-    const duplicateItemsCount = countDuplicates(data!);
-    console.log(duplicateItemsCount)
-    
-    const results = newData?.map(async (r) => { 
-      // const title = r?.title.replace(/\s+/g, '-').toLowerCase()
-      const newUrl = r.url.split("/").splice(3, 10);
-      const result = await ctx.invoke(
-        "vtex/loaders/intelligentSearch/productDetailsPage.ts",
-        { slug: `/${newUrl.join("/")}` }
-      );
-  
-      const salesPrice = parseInt(
-        result.product.isVariantOf.hasVariant[0].offers.offers[0]
-          .priceSpecification[1].price
-      );
-  
-      const listPrice = parseInt(
-        result.product.isVariantOf.hasVariant[0].offers.offers[0]
-          .priceSpecification[0].price
-      );
-  
-      const offer = calculatePercentageDifference({
-        num1: salesPrice,
-        num2: listPrice,
-      });
-  
-      return {
-        title: result.product.name,
-        description: result.product.description,
-        url: result.product.url,
-        image: result.product.isVariantOf.hasVariant[0].image[0].url,
-        salesPrice:
-          result.product.isVariantOf.hasVariant[0].offers.offers[0]
-            .priceSpecification[1].price,
-        listPrice:
-          result.product.isVariantOf.hasVariant[0].offers.offers[0]
-            .priceSpecification[0].price,
-        off: Math.round(offer),
-      };
+    const salesPrice = parseInt(
+      result.product.isVariantOf.hasVariant[0].offers.offers[0]
+        .priceSpecification[1].price
+    );
+
+    const listPrice = parseInt(
+      result.product.isVariantOf.hasVariant[0].offers.offers[0]
+        .priceSpecification[0].price
+    );
+
+    const offer = calculatePercentageDifference({
+      num1: salesPrice,
+      num2: listPrice,
     });
-  
-    const promiseResult = await Promise.all(results!);
-  
-    const rawResult = promiseResult.map((res) => {
-      const duplicateItem = duplicateItemsCount.find(
-        (dupl) => res.url === dupl.url
-      );
-  
-      if (duplicateItem) {
-        return { ...res, timesClicked: duplicateItem.count };
-      }
-  
-      return;
-    });
-
-  
-    const allProducts = rawResult.sort((a, b) => b!.timesClicked - a!.timesClicked);
-
-    const products = allProducts.slice(0,4)
-
 
     return {
-      title: "Trending products",
-      subTitle:"The most seen products",
-      products,
+      title: result.product.name,
+      description: result.product.description,
+      url: result.product.url,
+      image: result.product.isVariantOf.hasVariant[0].image[0].url,
+      salesPrice:
+        result.product.isVariantOf.hasVariant[0].offers.offers[0]
+          .priceSpecification[1].price,
+      listPrice:
+        result.product.isVariantOf.hasVariant[0].offers.offers[0]
+          .priceSpecification[0].price,
+      off: Math.round(offer),
     };
-  }
+  });
+
+  const promiseResult = await Promise.all(results!);
+
+  const rawResult = promiseResult.map((res) => {
+    const duplicateItem = duplicateItemsCount.find(
+      (dupl) => res.url === dupl.url
+    );
+
+    if (duplicateItem) {
+      return { ...res, timesClicked: duplicateItem.count };
+    }
+
+    return;
+  });
+
+  const allProducts = rawResult.sort(
+    (a, b) => b!.timesClicked - a!.timesClicked
+  );
+
+  const products = allProducts.slice(0, 4);
+
+  return {
+    title: "Trending products",
+    subTitle: "The most seen products",
+    products,
+  };
+}
 
 export default function MostSeen({
   title,
   subTitle,
-  products
+  products,
 }: SectionProps<typeof loader>) {
   return (
     <div class="mx-auto max-w-2xl px-4 py-16 sm:px-6 sm:py-24 lg:max-w-7xl lg:px-8">
@@ -101,8 +97,8 @@ export default function MostSeen({
       </h3>
 
       <div class="grid grid-cols-1 mt-8 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 xl:gap-x-8">
-        {products.map(p=>(
-            <a href="#" class="group">
+        {products.map((p) => (
+          <a href="#" class="group">
             <div class="aspect-h-1 aspect-w-1 w-full overflow-hidden rounded-lg bg-gray-200 xl:aspect-h-8 xl:aspect-w-7">
               <img
                 src={p?.image}
@@ -111,7 +107,9 @@ export default function MostSeen({
               />
             </div>
             <h3 class="mt-4 text-sm text-gray-700">{p?.title}</h3>
-            <p class="mt-1 text-lg font-medium text-gray-900">{p?.salesPrice}</p>
+            <p class="mt-1 text-lg font-medium text-gray-900">
+              {p?.salesPrice}
+            </p>
           </a>
         ))}
       </div>
