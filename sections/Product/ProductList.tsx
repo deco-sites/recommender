@@ -19,6 +19,7 @@ export type Product = {
 
 export type Props = {
   title?: string;
+  subTitle?: string;
   products?: Product[];
 };
 
@@ -89,22 +90,27 @@ export async function loader(props: Props, _req: Request, ctx: any) {
   const products = rawResult.sort((a, b) => b!.timesClicked - a!.timesClicked);
 
   return {
-    title: "Keep shopping",
+    title: "Keep shopping 🔍",
+    subTitle: "Continue where you left off",
     products,
   };
 }
 
 export default function ProductList({
   title,
+  subTitle,
   products,
 }: SectionProps<typeof loader>) {
   return (
     <>
       {products.length != 0 ? (
         <div class="mx-auto max-w-2xl px-4 py-16 sm:px-6 sm:py-24 lg:max-w-7xl lg:px-8 ">
-          <h2 class="text-2xl font-bold tracking-tight text-gray-900">
+          <h2 class="text-2xl leading-8 lg:leading-10 text-base-content text-center lg:text-4xl">
             {title}
           </h2>
+          <h3 class="leading-6 lg:leading-8 text-neutral text-center lg:text-2xl">
+            {subTitle}
+          </h3>
 
           <div class="mt-6 grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8">
             {products?.map((p) => (

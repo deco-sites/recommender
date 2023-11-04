@@ -65,7 +65,7 @@ export async function loader(props: Props, _req: Request, ctx: any) {
   const products = promiseResult;
 
   return {
-    title: "Trending products",
+    title: "Trending products 🔥",
     subTitle: "The most seen products",
     products,
   };
