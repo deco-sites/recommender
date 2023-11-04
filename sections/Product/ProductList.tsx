@@ -2,46 +2,8 @@ import type { SectionProps } from "deco/mod.ts";
 import type { ImageWidget } from "apps/admin/widgets.ts";
 import { supabase } from "../../routes/supabase/index.ts";
 import { getIP } from "https://deno.land/x/get_ip/mod.ts";
-
-interface DataItem {
-  userId: string;
-  url: string;
-  count: number;
-}
-
-function calculatePercentageDifference({
-  num1,
-  num2,
-}: {
-  num1: number;
-  num2: number;
-}) {
-  const percentageDiff = (num1 / num2) * 100;
-  return percentageDiff;
-}
-
-const countDuplicates = (data: DataItem[]) => {
-  const countMap = new Map<string, number>();
-
-  data.forEach((item) => {
-    const key = `${item.userId}_${item.url}`;
-    if (countMap.has(key)) {
-      countMap.set(key, countMap.get(key)! + 1);
-    } else {
-      countMap.set(key, 1);
-    }
-  });
-
-  const duplicates: DataItem[] = [];
-  countMap.forEach((count, key) => {
-    if ((count) => 1) {
-      const [userId, url] = key.split("_");
-      duplicates.push({ userId, url, count });
-    }
-  });
-
-  return duplicates;
-};
+import { calculatePercentageDifference } from "../../utils/CalculatePercentageDifference.ts";
+import { countDuplicatesByUser } from "../../utils/CountDuplicates.ts";
 
 export type Product = {
   title?: string;
@@ -57,6 +19,7 @@ export type Product = {
 
 export type Props = {
   title?: string;
+  subTitle?: string;
   products?: Product[];
 };
 
@@ -71,10 +34,9 @@ export async function loader(props: Props, _req: Request, ctx: any) {
     new Map(data?.map((obj) => [obj.url, obj])).values()
   );
 
-  const duplicateItemsCount = countDuplicates(data!);
+  const duplicateItemsCount = countDuplicatesByUser(data!);
 
   const results = newData?.map(async (r) => {
-    // const title = r?.title.replace(/\s+/g, '-').toLowerCase()
     const newUrl = r.url.split("/").splice(3, 10);
     const result = await ctx.invoke(
       "vtex/loaders/intelligentSearch/productDetailsPage.ts",
@@ -128,22 +90,27 @@ export async function loader(props: Props, _req: Request, ctx: any) {
   const products = rawResult.sort((a, b) => b!.timesClicked - a!.timesClicked);
 
   return {
-    title: "Keep shopping",
+    title: "Keep shopping 🔍",
+    subTitle: "Continue where you left off",
     products,
   };
 }
 
 export default function ProductList({
   title,
+  subTitle,
   products,
 }: SectionProps<typeof loader>) {
   return (
     <>
       {products.length != 0 ? (
         <div class="mx-auto max-w-2xl px-4 py-16 sm:px-6 sm:py-24 lg:max-w-7xl lg:px-8 ">
-          <h2 class="text-2xl font-bold tracking-tight text-gray-900">
+          <h2 class="text-2xl leading-8 lg:leading-10 text-base-content text-center lg:text-4xl">
             {title}
           </h2>
+          <h3 class="leading-6 lg:leading-8 text-neutral text-center lg:text-2xl">
+            {subTitle}
+          </h3>
 
           <div class="mt-6 grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8">
             {products?.map((p) => (
