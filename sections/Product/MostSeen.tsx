@@ -24,7 +24,6 @@ export async function loader(props: Props, _req: Request, ctx: any) {
 
   const results = trendResult?.map(async (r) => {
     const newUrl = r.key.split("/").splice(3, 10);
-    console.log(newUrl);
     const result = await ctx.invoke(
       "vtex/loaders/intelligentSearch/productDetailsPage.ts",
       { slug: `/${newUrl.join("/")}` }

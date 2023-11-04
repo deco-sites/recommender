@@ -1,11 +1,74 @@
-export default function MostSeen() {
+import type { SectionProps } from "deco/mod.ts";
+import { supabase } from "../../routes/supabase/index.ts";
+import { countDuplicates } from "../../utils/CountDuplicates.ts";
+import { getIP } from "https://deno.land/x/get_ip/mod.ts";
+
+export type Props = {
+  title?: string;
+  subTitle?: string;
+};
+
+export async function loader(props: Props, _req: Request, ctx: any) {
+  const ip = await getIP({ ipv6: true });
+  const { data } = await supabase
+    .from("recommender")
+    .select("*")
+    .eq("userId", ip);
+
+  const duplicateItemsCount = countDuplicates(data!);
+
+  function findFirstValue(arr, property) {
+    arr.sort((a, b) => b[property] - a[property]);
+    const largestValues = arr.slice(0, 1);
+    return largestValues;
+  }
+
+  const property = "count";
+  const trendResult = findFirstValue(duplicateItemsCount!, property);
+  console.log("ADAWDAWDUAWDHAUWDHUWA" + JSON.stringify(trendResult));
+
+  const topResult = trendResult?.map(async (r) => {
+    const newUrl = r.key.split("/").splice(3, 10);
+    console.log("NEWWWWWWWWWWWWWWW" + newUrl)
+    const rawResult = await ctx.invoke(
+      "vtex/loaders/intelligentSearch/productDetailsPage.ts",
+      { slug: `/${newUrl.join("/")}` }
+    );
+    return rawResult
+  })
+
+  console.log("TOPPPPPPPPPP" + JSON.stringify(topResult));
+  
+
+  const category = topResult[0].product.additionalProperty[3].value;
+  console.log("CATEGORIAAAAAAAA" + category);
+
+  const result = await ctx.invoke(
+    "vtex/loaders/intelligentSearch/suggestions.ts",
+    { query: category, count: 4 }
+  );
+
+  console.log("RESULT CATEEEE" + JSON.stringify(result));
+
+  return {
+    title: "Recommended for you",
+    subTitle: "Maybe you like it",
+    products,
+  };
+}
+
+export default function RecommendedProducts({
+  title,
+  subTitle,
+  products,
+}: SectionProps<typeof loader>) {
   return (
     <div class="mx-auto max-w-2xl px-4 py-16 sm:px-6 sm:py-24 lg:max-w-7xl lg:px-8">
       <h2 class="text-2xl leading-8 lg:leading-10 text-base-content text-center lg:text-4xl">
-        Recomendados para você
+        {title}
       </h2>
       <h3 class="leading-6 lg:leading-8 text-neutral text-center lg:text-2xl">
-        Talvez você goste
+        {subTitle}
       </h3>
 
       <div class="grid grid-cols-1 mt-8 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 xl:gap-x-8">

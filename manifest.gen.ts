@@ -37,12 +37,13 @@ import * as $$$$$$29 from "./sections/Product/ProductInfo.tsx";
 import * as $$$$$$30 from "./sections/Product/ProductList.tsx";
 import * as $$$$$$31 from "./sections/Product/ProductShelf.tsx";
 import * as $$$$$$32 from "./sections/Product/ProductShelfTabbed.tsx";
-import * as $$$$$$33 from "./sections/Product/SearchResult.tsx";
-import * as $$$$$$34 from "./sections/Product/Wishlist.tsx";
-import * as $$$$$$35 from "./sections/sideModalPromotion.tsx";
-import * as $$$$$$36 from "./sections/Social/InstagramPosts.tsx";
-import * as $$$$$$37 from "./sections/Social/WhatsApp.tsx";
-import * as $$$$$$38 from "./sections/Theme/Theme.tsx";
+import * as $$$$$$33 from "./sections/Product/RecommenderProducts.tsx";
+import * as $$$$$$34 from "./sections/Product/SearchResult.tsx";
+import * as $$$$$$35 from "./sections/Product/Wishlist.tsx";
+import * as $$$$$$36 from "./sections/sideModalPromotion.tsx";
+import * as $$$$$$37 from "./sections/Social/InstagramPosts.tsx";
+import * as $$$$$$38 from "./sections/Social/WhatsApp.tsx";
+import * as $$$$$$39 from "./sections/Theme/Theme.tsx";
 import * as $$$$$$$$$$$0 from "./apps/decohub.ts";
 import * as $$$$$$$$$$$1 from "./apps/site.ts";
 
@@ -86,12 +87,13 @@ const manifest = {
     "deco-sites/recommender/sections/Product/ProductList.tsx": $$$$$$30,
     "deco-sites/recommender/sections/Product/ProductShelf.tsx": $$$$$$31,
     "deco-sites/recommender/sections/Product/ProductShelfTabbed.tsx": $$$$$$32,
-    "deco-sites/recommender/sections/Product/SearchResult.tsx": $$$$$$33,
-    "deco-sites/recommender/sections/Product/Wishlist.tsx": $$$$$$34,
-    "deco-sites/recommender/sections/sideModalPromotion.tsx": $$$$$$35,
-    "deco-sites/recommender/sections/Social/InstagramPosts.tsx": $$$$$$36,
-    "deco-sites/recommender/sections/Social/WhatsApp.tsx": $$$$$$37,
-    "deco-sites/recommender/sections/Theme/Theme.tsx": $$$$$$38,
+    "deco-sites/recommender/sections/Product/RecommenderProducts.tsx": $$$$$$33,
+    "deco-sites/recommender/sections/Product/SearchResult.tsx": $$$$$$34,
+    "deco-sites/recommender/sections/Product/Wishlist.tsx": $$$$$$35,
+    "deco-sites/recommender/sections/sideModalPromotion.tsx": $$$$$$36,
+    "deco-sites/recommender/sections/Social/InstagramPosts.tsx": $$$$$$37,
+    "deco-sites/recommender/sections/Social/WhatsApp.tsx": $$$$$$38,
+    "deco-sites/recommender/sections/Theme/Theme.tsx": $$$$$$39,
   },
   "apps": {
     "deco-sites/recommender/apps/decohub.ts": $$$$$$$$$$$0,
