@@ -11,15 +11,20 @@ export type Props = {
 export async function loader(props: Props, _req: Request, ctx: any) {
   const { data } = await supabase.from("recommender").select("*");
 
-  const newData = Array.from(
-    new Map(data?.map((obj) => [obj.url, obj])).values()
-  );
-
   const duplicateItemsCount = countDuplicates(data!);
-  console.log(duplicateItemsCount);
 
-  const results = newData?.map(async (r) => {
-    const newUrl = r.url.split("/").splice(3, 10);
+  function findFourLargestValues(arr, property) {
+    arr.sort((a, b) => b[property] - a[property]);
+    const largestValues = arr.slice(0, 4);
+    return largestValues;
+  }
+
+  const property = "count";
+  const trendResult = findFourLargestValues(duplicateItemsCount!, property);
+
+  const results = trendResult?.map(async (r) => {
+    const newUrl = r.key.split("/").splice(3, 10);
+    console.log(newUrl);
     const result = await ctx.invoke(
       "vtex/loaders/intelligentSearch/productDetailsPage.ts",
       { slug: `/${newUrl.join("/")}` }
@@ -57,23 +62,7 @@ export async function loader(props: Props, _req: Request, ctx: any) {
 
   const promiseResult = await Promise.all(results!);
 
-  const rawResult = promiseResult.map((res) => {
-    const duplicateItem = duplicateItemsCount.find(
-      (dupl) => res.url === dupl.url
-    );
-
-    if (duplicateItem) {
-      return { ...res, timesClicked: duplicateItem.count };
-    }
-
-    return;
-  });
-
-  const allProducts = rawResult.sort(
-    (a, b) => b!.timesClicked - a!.timesClicked
-  );
-
-  const products = allProducts.slice(0, 4);
+  const products = promiseResult;
 
   return {
     title: "Trending products",
