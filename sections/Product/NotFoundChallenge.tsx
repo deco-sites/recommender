@@ -14,7 +14,7 @@ export interface Props {
 
 function NotFoundChallenge({ page, children, fallback }: Props) {
   if (page === null) {
-    return <fallback.Component {...fallback.props} />;
+    return <fallback.Component {...fallback.props} />;  
   }
 
   return <children.Component {...children.props} />;

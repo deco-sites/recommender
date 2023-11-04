@@ -1,61 +1,39 @@
 import { Handlers } from "$fresh/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.38.4";
 
-const supabase = createClient(
+export const supabase = createClient(
   "https://ouacxkdusjhgnuvzbgyf.supabase.co",
   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im91YWN4a2R1c2poZ251dnpiZ3lmIiwicm9sZSI6ImFub24iLCJpYXQiOjE2OTUwNTYyMTgsImV4cCI6MjAxMDYzMjIxOH0.Ob1wegNZILDGgibX-pI_tvrIrT313QTfqrIi1810HeY"
 );
 
 export type Body = {
   userId: string;
-  category: string;
+  url: string;
 };
 
 export const handler: Handlers = {
   async GET(_req, ctx) {
-    const { data } = await supabase.from("recommender").eq('userId', ctx.remoteAddr.hostname).select('*');
+    const { data } = await supabase.from("recommender").select('*').eq('userId', ctx.remoteAddr.hostname);
 
     return new Response(JSON.stringify(data));
   },
   async POST(_req, ctx) {
-    const body = _req.body;
+    const body = await _req.json()
   
     if (!body) {
       return new Response("Body is missing");
     }
-  
-    let chunk = "";
-    // I'm sorry about all this code below I know that is terrible but we don't have time anymore
+
     try {
-      const { done, value } = await body.getReader().read();
-      if (!done) {
-        chunk = new TextDecoder().decode(value);
-      } else {
-        return new Response("Empty body");
-      }
+    const data: Body = { userId: ctx.remoteAddr.hostname, url:body.url };
   
-      const [firstValue, secondValue] = chunk.split(",");
-
-      const userIdValue = firstValue.split(':')[1]
-
-      const categoryValue = secondValue.split(':')[1]
-
-      categoryValue.replace(new RegExp(`"`, "g"),"")
-      categoryValue.replace(new RegExp(`}`, "g"),"")
-      let resultCategoryValue = categoryValue.replace(new RegExp(`}`, "g"),"")
-  
-      userIdValue.replace(new RegExp(`"`, "g"),"")
-      userIdValue.replace(new RegExp(`}"`, "g"),"")
-
-      const data = { category: resultCategoryValue.replace(new RegExp(`"`, "g"),""), userId: userIdValue.replace(new RegExp(`"`, "g"),"") };
-  
-      if (!data.userId || !data.category) {
+      if (!data.userId || !data.url) {
         return new Response("Data extraction error");
       }
   
-      await supabase.from("recommender").insert({ userId: ctx.remoteAddr.hostname, category: data.category });
+      await supabase.from("recommender").insert(data);
   
-      return new Response("Saved");
+      return new Response(JSON.stringify(data));
     } catch (error) {
       return new Response("An error occurred: " + error);
     }
