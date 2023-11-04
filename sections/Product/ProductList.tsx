@@ -3,11 +3,6 @@ import type { ImageWidget } from "apps/admin/widgets.ts";
 import { supabase } from "../../routes/supabase/index.ts";
 import { getIP } from "https://deno.land/x/get_ip/mod.ts";
 
-const getMyIP = async () => {
-  const ip = await getIP({ ipv6: true });
-  return ip;
-};
-getMyIP();
 
 interface DataItem {
   userId: string;
@@ -69,16 +64,17 @@ export type Props = {
 };
 
 export async function loader(props: Props, _req: Request, ctx: any) {
+  const ip = await getIP({ ipv6: true });
   const { data } = await supabase
     .from("recommender")
     .select("*")
-    .eq("userId", "127.0.0.1");
+    .eq("userId", ip);
 
   const newData = Array.from(
     new Map(data?.map((obj) => [obj.url, obj])).values()
   );
 
-  const duplicateItemsCount = countDuplicates(data);
+  const duplicateItemsCount = countDuplicates(data!);
 
   const results = newData?.map(async (r) => {
     // const title = r?.title.replace(/\s+/g, '-').toLowerCase()
@@ -132,7 +128,7 @@ export async function loader(props: Props, _req: Request, ctx: any) {
     return;
   });
 
-  const products = rawResult.sort((a, b) =>  b!.timesClicked - a!.timesClicked );
+  const products = rawResult.sort((a, b) => b!.timesClicked - a!.timesClicked);
 
   return {
     title: "Keep shopping",
@@ -152,6 +148,9 @@ export default function ProductList({
         {products?.map((p) => (
           <div class="group relative border rounded-md">
             <div class="px-8 py-4 group-hover:opacity-75">
+              <div class="absolute px-3 py-1 rounded top-2 left-1 text-gray-500 text-sm">
+                Seen&nbsp;{p.timesClicked}x
+              </div>
               <div class="absolute px-3 py-1 rounded top-2 right-1 bg-red-500 text-white text-sm">
                 -{p.off}% Off
               </div>
