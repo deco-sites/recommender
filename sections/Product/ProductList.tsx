@@ -2,46 +2,8 @@ import type { SectionProps } from "deco/mod.ts";
 import type { ImageWidget } from "apps/admin/widgets.ts";
 import { supabase } from "../../routes/supabase/index.ts";
 import { getIP } from "https://deno.land/x/get_ip/mod.ts";
-
-interface DataItem {
-  userId: string;
-  url: string;
-  count: number;
-}
-
-function calculatePercentageDifference({
-  num1,
-  num2,
-}: {
-  num1: number;
-  num2: number;
-}) {
-  const percentageDiff = (num1 / num2) * 100;
-  return percentageDiff;
-}
-
-const countDuplicates = (data: DataItem[]) => {
-  const countMap = new Map<string, number>();
-
-  data.forEach((item) => {
-    const key = `${item.userId}_${item.url}`;
-    if (countMap.has(key)) {
-      countMap.set(key, countMap.get(key)! + 1);
-    } else {
-      countMap.set(key, 1);
-    }
-  });
-
-  const duplicates: DataItem[] = [];
-  countMap.forEach((count, key) => {
-    if ((count) => 1) {
-      const [userId, url] = key.split("_");
-      duplicates.push({ userId, url, count });
-    }
-  });
-
-  return duplicates;
-};
+import { calculatePercentageDifference } from "../../utils/CalculatePercentageDifference.ts";
+import { countDuplicatesByUser } from "../../utils/CountDuplicates.ts";
 
 export type Product = {
   title?: string;
@@ -71,9 +33,9 @@ export async function loader(props: Props, _req: Request, ctx: any) {
     new Map(data?.map((obj) => [obj.url, obj])).values()
   );
 
-  const duplicateItemsCount = countDuplicates(data!);
+  const duplicateItemsCount = countDuplicatesByUser(data!);
 
-  const results = newData?.map(async (r) => {
+  const results = newData?.map(async (r) => { 
     // const title = r?.title.replace(/\s+/g, '-').toLowerCase()
     const newUrl = r.url.split("/").splice(3, 10);
     const result = await ctx.invoke(
