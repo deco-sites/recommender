@@ -86,7 +86,9 @@ export default function MostSeen({
 
       <div class="grid grid-cols-1 mt-8 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 xl:gap-x-8">
         {products.map((p) => (
-          <a href={p?.url} class="group">
+          <a href={p?.url} class="group border rounded-md relative">
+            <div class='p-4'>
+            <div class='text-white bg-red-500 px-2 py-1 text-xs rounded absolute top-3 left-2'>{p?.off}% Off</div>
             <div class="aspect-h-1 aspect-w-1 w-full overflow-hidden rounded-lg bg-gray-200 xl:aspect-h-8 xl:aspect-w-7">
               <img
                 src={p?.image}
@@ -96,8 +98,9 @@ export default function MostSeen({
             </div>
             <h3 class="mt-4 text-sm text-gray-700">{p?.title}</h3>
             <p class="mt-1 text-lg font-medium text-gray-900">
-              {p?.salesPrice}
+            R$&nbsp;{p?.salesPrice}
             </p>
+            </div>
           </a>
         ))}
       </div>

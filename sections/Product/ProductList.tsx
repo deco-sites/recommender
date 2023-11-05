@@ -87,7 +87,7 @@ export async function loader(props: Props, _req: Request, ctx: any) {
     return;
   });
 
-  const products = rawResult.sort((a, b) => b!.timesClicked - a!.timesClicked);
+  const products = rawResult.sort((a, b) => b!.timesClicked - a!.timesClicked).splice(0,8);
 
   return {
     title: "Keep shopping 🔍",
